@@ -7,6 +7,10 @@ import (
 	"golang.org/x/oauth2"
 )
 
+const (
+	PerPageCount = 100
+)
+
 type GitHubManager struct {
 	client   *github.Client
 	username string
@@ -32,7 +36,7 @@ func (gm *GitHubManager) GetRepositories(owner string) ([]string, error) {
 		Sort:      "created",
 		Direction: "asc",
 		ListOptions: github.ListOptions{
-			PerPage: 100,
+			PerPage: PerPageCount,
 		},
 	}
 	for {
@@ -55,7 +59,7 @@ func (gm *GitHubManager) GetStargazers(owner string, repo string) ([]string, err
 	var allStargazers []string
 	ctx := context.Background()
 	opt := &github.ListOptions{
-		PerPage: 100,
+		PerPage: PerPageCount,
 	}
 	for {
 		stars, resp, err := gm.client.Activity.ListStargazers(ctx, owner, repo, opt)
@@ -75,4 +79,33 @@ func (gm *GitHubManager) GetStargazers(owner string, repo string) ([]string, err
 	}
 	return allStargazers, nil
 
+}
+
+func (gm *GitHubManager) GetStarredUsers(owner string) ([]string, error) {
+	var userStarred []string
+	ctx := context.Background()
+	opt := &github.ActivityListStarredOptions{
+		Sort:      "created",
+		Direction: "asc",
+		ListOptions: github.ListOptions{
+			PerPage: PerPageCount,
+		},
+	}
+	for {
+		repos, resp, err := gm.client.Activity.ListStarred(ctx, owner, opt)
+		if err != nil {
+			return nil, err
+		}
+		for _, repo := range repos {
+			if repo.Repository != nil && repo.Repository.Owner != nil && repo.Repository.Owner.Login != nil {
+				userStarred = append(userStarred, *repo.Repository.Owner.Login)
+			}
+
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+	return userStarred, nil
 }
