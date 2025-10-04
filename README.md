@@ -5,7 +5,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/dbunt1tled/github-stargazers.svg)](https://pkg.go.dev/github.com/dbunt1tled/github-stargazers)
 [![GitHub release](https://img.shields.io/github/release/dbunt1tled/github-stargazers.svg)](https://github.com/dbunt1tled/github-stargazers/releases/)
 
-A Go application that tracks stargazers for your GitHub repositories over time. It helps you monitor the growth and changes in your repository's stargazers.
+A Go application built with Cobra CLI that tracks stargazers for your GitHub repositories over time. It helps you monitor the growth and changes in your repository's stargazers.
 
 ## Features
 
@@ -14,6 +14,8 @@ A Go application that tracks stargazers for your GitHub repositories over time. 
 - Identify new and lost stargazers between runs
 - Simple configuration with environment variables
 - Lightweight and fast execution
+- Modern CLI interface with subcommands
+- Easy to extend with new commands
 
 ## Prerequisites
 
@@ -56,19 +58,44 @@ go install github.com/dbunt1tled/github-stargazers/cmd/github-stargazers@latest
    DATABASE_PATH="./data.db"
    ```
 
-## Usage
+## Available Commands
 
-Run the application:
+### Track Stargazers
+
+Fetch and track stargazers for all your repositories:
 
 ```bash
-./github-stargazers
+./github-stargazers stargazers
 ```
 
-The application will:
+This command will:
 1. Fetch all repositories for the specified GitHub user
 2. Get current stargazers for each repository
 3. Store the data in the SQLite database
 4. Show new and lost stargazers compared to the previous run
+
+### List Unstarred Users
+
+List users who have unstarred your repositories:
+
+```bash
+./github-stargazers unstar
+```
+
+### Help
+
+Get help about any command:
+
+```bash
+./github-stargazers help
+```
+
+Or for a specific command:
+
+```bash
+./github-stargazers help stargazers
+./github-stargazers help unstar
+```
 
 ## Project Structure
 
@@ -77,6 +104,10 @@ The application will:
 ├── cmd/
 │   └── main.go               # Main application entry point
 ├── internal/
+│   ├── cli/                  # CLI command implementations using Cobra
+│   │   ├── root.go           # Root command and command setup
+│   │   ├── stat.go           # Stargazers statistics command
+│   │   └── unstargazer.go    # Unstargazer tracking command
 │   ├── config/               # Configuration management
 │   ├── db/                   # Database operations
 │   └── github/               # GitHub API client
