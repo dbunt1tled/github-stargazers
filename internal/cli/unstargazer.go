@@ -41,8 +41,10 @@ func NewUnStargazerCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			seen := make(map[string]bool)
 			for _, u := range userStarred {
-				if !slices.Contains(userStargazers, u) {
+				if !slices.Contains(userStargazers, u) && !seen[u] {
+					seen[u] = true
 					cmd.Println(u)
 				}
 			}

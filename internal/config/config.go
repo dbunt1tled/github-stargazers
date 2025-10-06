@@ -24,7 +24,7 @@ func Load() (*Config, error) {
 	if _, err := os.Stat(".env"); err == nil {
 		v.SetConfigFile(".env")
 		v.SetConfigType("env")
-		if err := v.ReadInConfig(); err != nil {
+		if err = v.ReadInConfig(); err != nil {
 			return nil, fmt.Errorf("error reading .env: %w", err)
 		}
 	}
